@@ -118,7 +118,7 @@ export function getLeadershipRejectionStageConfigs(): StageConfig[] {
   stages.push(LR_ROUND2_CONFIDENCE_v2);
 
   // Group Stage - Hypothetical Round 3
-  stages.push(LR_R3_INSTRUCTIONS);
+  //stages.push(LR_R3_INSTRUCTIONS);
   stages.push(LR_R3_APPLY_STAGE);
 
   // Final feedback, survey, payout
@@ -1195,11 +1195,7 @@ const LR_ROUND2_CONFIDENCE_v2 = createSurveyStage({
 // Info stage
 //==========================================================
 export const LR_R3_INSTRUCTIONS_INFO = [
-  `Imagine you could play a third round.`,
-  'A new leader would be selected using the same rule as before.',
-  'The leader’s answers determine the payoff for all group members.',
-  'The leader will be chosen based on performance in the initial tasks, combined with a random component.',
-  'Better performers have higher chances of being selected, but the process is not fully deterministic.',
+  `Imagine you could complete the group task one last time with a new leader (same task, same role, same selection process).`,
 ];
 
 export const LR_R3_INSTRUCTIONS = createInfoStage({
@@ -1214,6 +1210,9 @@ export const LR_R3_INSTRUCTIONS = createInfoStage({
 const LR_R3_APPLY_STAGE = createSurveyStage({
   id: 'r3_apply',
   name: 'Round 3',
+  descriptions: createStageTextConfig({
+    primaryText: `Imagine you could complete the group task one last time with a new leader (same task, same role, same selection process).`,
+  }),
   questions: [
     createMultipleChoiceSurveyQuestion({
       id: 'apply_r3',
@@ -1227,7 +1226,7 @@ const LR_R3_APPLY_STAGE = createSurveyStage({
     createScaleSurveyQuestion({
       id: 'wtl_r3',
       questionTitle:
-        'How much do you want to be the leader (0 = not at all, 10 = very much)?',
+        'How much would you like to be the leader (0 = not at all, 10 = very much)?',
       lowerText: 'Not at all',
       upperText: 'Very much',
       lowerValue: 0,
