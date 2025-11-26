@@ -70,18 +70,6 @@ export const LR_METADATA = createMetadataConfig({
     'A multi-round experiment examining individual and group decision-making.',
 });
 
-/** Custom reveal item with render callback
-interface CustomRevealItem {
-  id: string;
-  revealAudience: RevealAudience;
-  revealScorableOnly: boolean;
-  renderMessage: (
-    participant: ParticipantProfileExtended,
-    publicStageData: LRRankingStagePublicData,
-  ) => string;
-}
-**/
-
 /* ---------------------------------------------------------------------------
  * Stage flow
  * ------------------------------------------------------------------------- */
@@ -102,6 +90,7 @@ export function getLeadershipRejectionStageConfigs(): StageConfig[] {
   stages.push(LR_P1_TASK2_INSTRUCTIONS_STAGE);
   stages.push(LR_BASELINE_TASK_2);
   stages.push(LR_BASELINE_CONFIDENCE);
+  stages.push(LR_BASELINE_CONFIDENCE_v2);
 
   // Transfer
   stages.push(LR_TRANSFER_STAGE);
@@ -114,6 +103,8 @@ export function getLeadershipRejectionStageConfigs(): StageConfig[] {
   stages.push(LR_R1_GROUP_TASK_STAGE);
   stages.push(LR_R1_STATUS_FEEDBACK_STAGE);
   stages.push(LR_R1_BELIEF_STAGE);
+  stages.push(LR_R1_BELIEF_CANDIDATES_UPDATE);
+  stages.push(LR_ROUND1_CONFIDENCE_v2);
 
   // Group Stage - Round 2
   stages.push(LR_R2_INSTRUCTIONS);
@@ -123,15 +114,17 @@ export function getLeadershipRejectionStageConfigs(): StageConfig[] {
   stages.push(LR_R2_GROUP_TASK_STAGE);
   stages.push(LR_R2_STATUS_FEEDBACK_STAGE);
   stages.push(LR_R2_BELIEF_STAGE);
+  stages.push(LR_R2_BELIEF_CANDIDATES_UPDATE);
+  stages.push(LR_ROUND2_CONFIDENCE_v2);
 
   // Group Stage - Hypothetical Round 3
   stages.push(LR_R3_INSTRUCTIONS);
   stages.push(LR_R3_APPLY_STAGE);
 
   // Final feedback, survey, payout
+  stages.push(LR_FINAL_SURVEY_STAGE);
   stages.push(LR_FEEDBACK_STAGE);
   stages.push(LR_FEEDBACK_STAGE_BIS);
-  stages.push(LR_FINAL_SURVEY_STAGE);
   stages.push(LR_PAYOUT_INFO_STAGE);
   stages.push(LR_PAYOUT_STAGE);
 
@@ -368,10 +361,10 @@ export function createLASMultipleChoiceQuestion(
 // ─────────────────────────────────────────────────────────────────────────────
 const LR_TOS_LINES = [
   'Thank you for participating in this study.',
-  'This research is conducted by the Paris School of Economics and has been approved by their institutional review board for [ethical standards](https://www.parisschoolofeconomics.eu/a-propos-de-pse/engagements-ethiques/integrite-scientifique/).',
-  'The study will take approximately 15 minutes, with an additional 30 minutes if you are selected for the second round. Detailed instructions about the compensation will be provided in the relevant sections.',
-  'By participating, you agree that your responses, including basic demographic information, will be saved. No identifiable personal data will be collected. All data will be anonymized and used solely for scientific research. Your data will not be shared with third parties.',
-  "By ticking the box below and clicking 'Next,' you accept these terms and proceed with the study.",
+  '\nThis research is conducted by the Paris School of Economics and has been approved by their institutional review board for [ethical standards](https://www.parisschoolofeconomics.eu/a-propos-de-pse/engagements-ethiques/integrite-scientifique/).',
+  '\nThe study will take approximately 35 minutes. Detailed instructions about the compensation will be provided in the relevant sections.',
+  '\n By participating, you agree that your responses, including basic demographic information, will be saved. No identifiable personal data will be collected. All data will be anonymized and used solely for scientific research. Your data will not be shared with third parties.',
+  "\n By ticking the box below and clicking 'Next,' you accept these terms and proceed with the study.",
   '\n\nIf you have any questions, you can write to us at pse.experimenter@gmail.com.',
 ];
 
@@ -385,15 +378,19 @@ const LR_TOS_STAGE = createTOSStage({
 // ****************************************************************************
 // Intro info stage
 // ****************************************************************************
-const LR_INTRO_INFO_DESCRIPTION_PRIMARY = `This experiment is part of a research project that explores human decisions in various online environments. You will play an engaging game that presents a survival scenario, and answer questions. You may also interact with others during the experiment.`;
+const LR_INTRO_INFO_DESCRIPTION_PRIMARY = `This experiment is part of a research project that explores human decisions in various online environments. You will play engaging tasks, and answer questions. You may also interact with others during the experiment.`;
 
 const LR_INTRO_INFO_LINES = [
-  'You will receive a **fixed fee of £3** for your participation, with an opportunity to earn a **£2 bonus**. We will explain precisely how your bonus is determined later.',
-  'At the end of the experiment, you will be redirected to a waiting page. This waiting time is part of the experiment and has been factored into your payment. **You will not be approved for the payout if you do not remain on this waiting page for the full requested duration**.',
-  'During this waiting time, you may be invited to continue the experiment by completing two additional parts, Part 2 and Part 3. These parts will be played in *groups of four*, and should take an estimated additional 30 minutes.  You will receive a **fixed fee of £6 for completing Parts 2 and 3. Additionally, you will have the opportunity to earn a **£2 bonus**, based on your decisions and the decisions of other participants  in these parts. One of the 2 parts will be randomly selected to determine this bonus.',
-  "To sum up:\n\n* You'll complete a first part *individually*, and then wait to see if you are selected to take part in the next part of the experiment.\n* You need to wait the full amount of time to get your payoff for Part 1, even though you are not selected or choose to leave the experiment.\n* If you receive an invitation, you can then start the rest of the experiment, that is played in *groups of 6 participants*.",
+  'In this experiment you will play engaging games that present survival scenarios, and answer questions. \n',
+  'This experiment consists of two parts:\n\n* Part 1: lasts about 10–15 minutes. \n* Part 2: lasts about 20 minutes.',
+  'You will earn a **£5 fixed fee** for completing the full experiment. On top of that, you’ll have the opportunity to earn a **bonus of up to £3**, depending on your own and other participants’ decisions.\n',
+  'At the end of Part 1, you will be redirected to a **waiting page**. This waiting time is part of the experiment and has been factored into your payment. **You must remain on this page for the full requested duration—if you leave early or close the study before the waiting period ends, your submission will not be approved.**\n',
+  'This waiting period allows us to form groups, as the experiment involves **live interactions** with other participants in Part 2. Once a group is formed, you will be invited to continue to Part 2. **If you are invited to Part 2, you must complete it for your submission to be approved.** If you are invited but choose not to continue, your submission will not be approved.\n' +
+    'In rare cases, if we are unable to match you with a group for Part 2 (for example, if there are not enough participants online), you will complete only the first part and still receive the full fixed fee for Part 1.\n',
+  'To sum up: You will complete the first part individually, and then wait to be invited to the next part of the experiment in groups. **Your submission will only be approved if you do the full experiment**. In the rare case where we could not send you an invitation for Part 2, your submission will still be approved.\n',
   '💸 Your payments will be translated into the currency of your specification when they are paid out to you on the Prolific platform. **Please allow us 24-48 hours to process the payments.**',
-  '‼️ If you experience technical difficulties during the study, **please message the experiment administrators on Prolific as soon as possible.**',
+  '‼️  This is an interactive experiment, meaning you may be grouped with other participants playing at the same time. Because of this, there may occasionally be short waiting periods while others make their decisions. These waiting times are already included in the estimated duration and payment. Please remain patient and attentive during these moments.\n ',
+  'If you experience technical difficulties during the study, **please message the experiment administrators on Prolific as soon as possible.**',
   'Please click “Next stage” to proceed.',
 ];
 
@@ -433,11 +430,6 @@ const LR_PERSONAL_INFO_STAGE = createSurveyStage({
           imageId: '',
           text: 'Other',
         },
-        {
-          id: '4',
-          imageId: '',
-          text: 'Prefer not to say',
-        },
       ],
     }),
   ],
@@ -455,7 +447,8 @@ const LR_PROFILE_STAGE = createProfileStage({
   id: 'profile',
   name: 'View randomly assigned profile',
   descriptions: createStageTextConfig({
-    primaryText: 'This information may be visible to other participants.',
+    primaryText:
+      'Here is the profile that has been randomly assigned to you. This information may be visible to other participants.',
   }),
   profileType: ProfileType.ANONYMOUS_PARTICIPANT,
 
@@ -478,12 +471,14 @@ const LR_P1_TASK1_INSTRUCTIONS_INFO_LINES = [
   '## Your task:',
   'You are asked to **evaluate these 10 items in terms of their importance for your survival, as you wait to be rescued**. The computer will randomly generate pairs of items, and you will select which of the two is the most useful in your situation.',
   '## Payment:',
-  "Your answers will be compared to a panel of experts' solutions. At the end of the experiment, a question from Part 1 will be randomly selected to determine your payment for this part. You will receive a £2 bonus if your answer to this question is correct, and £0 otherwise.",
+  'Your answers will be compared to the solutions provided by a panel of experts. At the end of the experiment, one task from the experiment will be randomly selected to determine your bonus payment. Within that task, one question will be chosen at random.',
+  'If your answer to that question matches the expert solution, you will receive a £2 bonus; otherwise, the bonus will be £0.',
+  '**Important note: It is possible that your performance on this task will influence later stages of the experiment. Please make sure to stay focused and do your best throughout.**\n',
   'Please click “Next stage” to proceed.',
 ];
 
 const LR_P1_TASK1_INSTRUCTIONS_STAGE = createInfoStage({
-  name: 'Part 1 instructions',
+  name: 'Part 1a instructions',
   infoLines: LR_P1_TASK1_INSTRUCTIONS_INFO_LINES,
 
   progress: createStageProgressConfig({
@@ -498,7 +493,7 @@ const LR_P1_TASK1_INSTRUCTIONS_STAGE = createInfoStage({
 
 const LR_BASELINE_TASK_1 = createSurveyStage({
   id: LR_BASELINE_TASK1_ID,
-  name: 'Individual survival task baseline 1',
+  name: 'Part 1a - Survival task',
   descriptions: createStageTextConfig({infoText: LAS_SCENARIO_REMINDER}),
   questions: createLASSurvivalSurvey(
     LAS_INDIVIDUAL_ITEMS_MULTIPLE_CHOICE_QUESTIONS,
@@ -523,12 +518,14 @@ const LR_P1_TASK2_INSTRUCTIONS_INFO_LINES = [
   '## Your task:',
   'You are asked to **evaluate these 10 items in terms of their importance for your survival, as you wait to be rescued**. The computer will randomly generate pairs of items, and you will select which of the two is the most useful in your situation.',
   '## Payment:',
-  "Your answers will be compared to a panel of experts' solutions. At the end of the experiment, a question from Part 1 will be randomly selected to determine your payment for this part. You will receive a £2 bonus if your answer to this question is correct, and £0 otherwise.",
+  'Your answers will be compared to the solutions provided by a panel of experts. At the end of the experiment, one task from the experiment will be randomly selected to determine your bonus payment. Within that task, one question will be chosen at random.',
+  'If your answer to that question matches the expert solution, you will receive a £2 bonus; otherwise, the bonus will be £0.',
+  '**Important note: It is possible that your performance on this task will influence later stages of the experiment. Please make sure to stay focused and do your best throughout.**\n',
   'Please click “Next stage” to proceed.',
 ];
 
 const LR_P1_TASK2_INSTRUCTIONS_STAGE = createInfoStage({
-  name: 'Part 1 instructions',
+  name: 'Part 1b instructions',
   infoLines: LR_P1_TASK2_INSTRUCTIONS_INFO_LINES,
 
   progress: createStageProgressConfig({
@@ -543,7 +540,7 @@ const LR_P1_TASK2_INSTRUCTIONS_STAGE = createInfoStage({
 
 const LR_BASELINE_TASK_2 = createSurveyStage({
   id: LR_BASELINE_TASK2_ID,
-  name: 'Individual survival task baseline 2',
+  name: 'Part 1b - Survival task',
   descriptions: createStageTextConfig({infoText: SD_SCENARIO_REMINDER}),
   questions: createSDSurvivalSurvey(
     SD_INDIVIDUAL_ITEMS_MULTIPLE_CHOICE_QUESTIONS,
@@ -558,17 +555,18 @@ const LR_BASELINE_TASK_2 = createSurveyStage({
 // Part 1 - Confidence Stage
 // ****************************************************************************
 export const LR_BASELINE_CONF_INFO =
-  'We would like you to guess how well you did in Part 1 compared to a sample of 100 other participants who completed the same task before you. Please answer the questions below.';
+  'At the end of the experiment, one belief question (from this or another similar section) will be randomly selected. If your selected answer correctly reflects your actual performance or relative position compared to others, you will receive the £0.50 bonus.\n' +
+  'You can earn an additional £0.50 bonus for accurate guesses in the following questions';
 
 const LR_BASELINE_CONFIDENCE = createSurveyStage({
-  name: 'Performance Estimation',
+  name: 'Part 1 - Performance Estimation',
   descriptions: createStageTextConfig({
     primaryText: LR_BASELINE_CONF_INFO,
   }),
   questions: [
     createMultipleChoiceSurveyQuestion({
       questionTitle:
-        'How well do you think you did compared to previous participants?',
+        'We would like you to guess how well you did in Part 1 compared to a sample of 100 other participants who completed the same task before you. How well do you think you did compared to previous participants?',
       options: [
         {
           id: '1',
@@ -599,11 +597,78 @@ const LR_BASELINE_CONFIDENCE = createSurveyStage({
   }),
 });
 
+export const LR_BASELINE_CONF_INFO_v2 =
+  'You can earn an additional £0.50 bonus for accurate guesses in the following questions. \n Imagine you were matched with a group of five other participants (so six in total, including you) doing the same task at the moment. Based on your performance in the previous task, what do you think your rank would be within this group?';
+
+const LR_BASELINE_CONFIDENCE_v2 = createSurveyStage({
+  name: 'Part 1 - Performance Estimation',
+  descriptions: createStageTextConfig({
+    primaryText: LR_BASELINE_CONF_INFO_v2,
+  }),
+  questions: [
+    createMultipleChoiceSurveyQuestion({
+      questionTitle:
+        'Please select the option that best reflects your belief about your rank:',
+      options: [
+        {
+          id: '1',
+          imageId: '',
+          text: 'I would be ranked 1st (the best performer in my group)',
+        },
+        {
+          id: '2',
+          imageId: '',
+          text: 'I would be ranked 2nd',
+        },
+        {
+          id: '3',
+          imageId: '',
+          text: 'I would be ranked 3rd',
+        },
+        {
+          id: '4',
+          imageId: '',
+          text: 'I would be ranked 4th',
+        },
+        {
+          id: '5',
+          imageId: '',
+          text: 'I would be ranked 5th',
+        },
+        {
+          id: '6',
+          imageId: '',
+          text: 'I would be ranked 6th',
+        },
+      ],
+    }),
+    createScaleSurveyQuestion({
+      id: 'conf_baseline',
+      questionTitle:
+        'How many questions of the 10 questions do you think you answered correctly in the previous tasks?',
+      lowerText: '',
+      upperText: '',
+      lowerValue: 0,
+      upperValue: 10,
+    }),
+  ],
+  progress: createStageProgressConfig({
+    showParticipantProgress: false,
+  }),
+});
+
 // ****************************************************************************
 // "Lobby" - transfer stage
 // ****************************************************************************
 export const LR_TRANSFER_DESCRIPTION_PRIMARY =
-  'Please wait on this page for up to 10 minutes. There may be attention checks to make sure that you are waiting. If you leave this page before the time is up, you will not be approved for the payout. A link may appear offering you the option to continue to parts 2 and 3 of the experiment. These additional parts will take an estimated *30 minutes*. If you complete these additional parts, you will earn an additional **£6 fixed fee, as well as up to a £2 bonus**. Thank you for your patience.';
+  'Please wait on this page for up to 10 minutes while we pair you with other participants for the next part of the experiment.' +
+  '\n\n During this time, there may be occasional attention checks to ensure that you are waiting and still active.' +
+  '\n\n If you leave this page or close the browser before the time is up, your submission will not be approved for payment.' +
+  '\n\n Once we find a suitable group, a link will appear on this page inviting you to continue to the next part of the experiment. If you decline the invitation, your submission will not be approved, as completing Part 2 is required for full participation.' +
+  '\n\n In the rare case that we are unable to find a group for you within 10 minutes, the page will time out automatically. If this happens, it means we were unable to match you with others, and you will still receive the full £5 fixed payment for your participation up to this point. However, if you leave the page before the 10 minutes are up, we will consider that you quit the experiment, and your submission will not be approved.' +
+  '\n This next part will take approximately 20 minutes to complete.' +
+  '\n This is an interactive experiment, meaning you will be grouped with other participants who are playing at the same time. Because of this, there may occasionally be short waiting periods while others make their decisions. These waiting times are already included in the estimated duration and payment. Please remain patient and attentive during these moments.' +
+  'Thank you for your patience!';
 
 export const LR_TRANSFER_STAGE = createTransferStage({
   name: 'Lobby',
@@ -631,28 +696,39 @@ export const LR_TRANSFER_STAGE = createTransferStage({
 //==========================================================
 
 const LR_R1_INSTRUCTIONS_INFO = [
-  `You will now play in a group of 6 participants.`,
-  'Each round, one participant is chosen as the leader. The leader’s answers determine the payoff for all group members.',
-  'The leader will be chosen based on performance in the initial tasks, combined with a random component.',
-  'Better performers have higher chances of being selected, but the process is not fully deterministic.',
+  `You are now about to start the second part of the Experiment.`,
+  'For this part, and for the remainder of the experiment, you will work in groups. You have been randomly assigned to a group with other participants who are taking part in the same experiment today. A leader will be designated within each group. The details concerning the role of the leaders and how they are chosen are provided below. \n',
+  'The task that you will complete in Part 2a is the same as in the first part of this experiment but with different pairs of items. \n',
+  "Leader Role: For each question, the leaders will be responsible for providing an answer on behalf of the group. The leader's answers will be evaluated just as in Part 1 (i.e. compared to the answers given by a panel of experts), and all members' payoff for this task will be entirely determined by the leader's answers. The leader receives a fixed £0.50 payment for endorsing the role.",
+  'Leader Selection: Here is how we will select the leader for the next stage: \n\n*On the next page, you will be asked whether you would like to apply for the leader role.\n*Everyone who chooses to apply will be considered as a candidate for the role.\n*We will then conduct a lottery in which each candidate’s chance of being selected depends on their performance scores from the two basic tasks. Participants with higher performance scores will have higher chances of being selected as leader, but no one is guaranteed to be chosen.\n**The top performer always has around 60% chance of being selected as leader\n**Then the probability of being selected decreases with your rank. For example if there are 5 persons who apply, the best performer in Part 1 has 60% of being elected, the second best has x%, the third best x%, the fourth best x% and the last candidate has x%.\n*If no one applies, all group members will automatically be included in the lottery using the same rule—so even if you choose not to apply, you may still be selected as leader if no one else applies.',
+  '\n Timing of the Selection: To avoid unnecessary waiting, everyone will complete the group task before the leader is revealed. Keep in mind that you could be selected as the leader, so please do your best to maximize your own (and potentially your group’s) payoff during the task.',
+  '\n Payment: At the end of the experiment, one task will be randomly selected to determine your bonus payment. Within that task, one question will also be chosen at random.\n' +
+    'If the selected question comes from Part 2a, the leader’s answer will be used to determine the outcome. You will receive a £2 bonus if the leader’s answer is correct, and £0 otherwise.\n',
 ];
 
 const LR_R1_INSTRUCTIONS = createInfoStage({
-  name: 'Round 1 - Instructions',
+  name: 'Part 2a - Instructions',
   infoLines: LR_R1_INSTRUCTIONS_INFO,
 });
 
 //==========================================================
 // Application stage
 //==========================================================
+export const LR_R1_APPLY_STAGE_INFO =
+  'As mentioned on the previous page one leader will be appointed in each group. The leader’s answer will determine everyone’s payoff for this stage of the experiment.\n' +
+  "The task you are about to complete is the same type of task you encountered in the first part of the experiment, but it will feature different pairs of items.\n'";
 
 const LR_R1_APPLY_STAGE = createSurveyStage({
   id: 'r1_apply',
-  name: 'Round 1',
+  name: 'Part 2a - Apply',
+  descriptions: createStageTextConfig({
+    primaryText: LR_R1_APPLY_STAGE_INFO,
+  }),
   questions: [
     createMultipleChoiceSurveyQuestion({
       id: 'apply_r1',
-      questionTitle: 'Would you like to apply to become the leader?',
+      questionTitle:
+        'Would you like to apply to be the leader of your group for this stage?',
       options: [
         {id: 'yes', imageId: '', text: 'Yes'},
         {id: 'no', imageId: '', text: 'No'},
@@ -672,7 +748,11 @@ const LR_R1_APPLY_STAGE = createSurveyStage({
 
 const LR_R1_BELIEF_CANDIDATES = createSurveyStage({
   id: 'r1_belief_candidate',
-  name: 'Round 1 - Survey',
+  name: 'Part 2a - Survey',
+  descriptions: createStageTextConfig({
+    primaryText:
+      'At the end of the experiment, one survey question (from this or another similar section) will be randomly selected. You can get a £0.50 bonus by accurately guessing number of applicants.',
+  }),
   questions: [
     createScaleSurveyQuestion({
       id: 'r1_belief_candidate',
@@ -685,26 +765,6 @@ const LR_R1_BELIEF_CANDIDATES = createSurveyStage({
     }),
   ],
 });
-
-/* //==========================================================
-// Selection function (not shown to participant)
-//==========================================================*/
-
-/* NEED A FUNCTION TO COMPUTE WHO IS THE SELECTED LEADER BASED ON
-    a) performance in individual stages (score Task 1a + score Task 1b)
-    b) applications (apply_r1 = yes)
- => Apply a weighted probability lottery to select the leader, where weights depends on i) performance and ii) number of candidates to select
- => If there are no candidates, apply the same mechanism but to all group members
- => On top of that, for each non-candidate (in groups where there is a least one candidate) > consider this participant
-  as a hypothetical candidate on top of the real set of candidate and recompute the outcome in this counterfactual reality
-
-Store the status of each participant:
-- candidate_accepted
-- candidate_rejected
-- non_candidate_accepted
-- non_candidate_hypo_accepted
-- non_candidate_hypo_rejected
-*/
 
 //==========================================================
 // Group Task 1
@@ -721,14 +781,12 @@ export const LR_R1_INSTRUCTIONS_GROUP_INFO = [
 
 export const LR_R1_INSTRUCTIONS_GROUP = createLRRankingStage({
   id: 'r1_instructions',
-  name: 'Round 1 - Task Instructions',
+  name: 'Part 2a - Task Instructions',
   descriptions: createStageTextConfig({
     primaryText:
-      'You are invited to complete the group task, while the computer gathers information to determine who the selected leader is. ' +
-      "In this part, everyone will complete the same task as in Part 1, but with a new set of questions. However, only the leader's answers will determine the payoff for this task. " +
-      "Since you could potentially be the leader without knowing it yet, keep in mind that your performance might determine everyone's payoff for this part. For each question, the leader's " +
-      'answers will be evaluated in the same manner as in Part 1 and will determine the payoff for all group members. Thus, if a question from next part is selected to determine your final payoff, ' +
-      "it will be the leader's answer that counts. After the task ends, you will be informed of whether or not you were the leader for this round. " +
+      'You are invited to complete the group task, while the computer gathers information to determine who the selected leader is. \n ' +
+      "In this part, everyone will complete the same task as in Part 1a, but with a new set of questions. However, only the leader's answers will determine the payoff for this task. " +
+      "Since you could potentially be the leader without knowing it yet, keep in mind that your performance might determine everyone's payoff for this part. After the task ends, you will be informed of whether or not you were the leader for this round. " +
       "Remember also that in the extreme case where no one applied, you could be selected as the leader. As a result, try to perform to the best of your ability in the following task, regardless of your application status.'",
   }),
   progress: createStageProgressConfig({waitForAllParticipants: true}),
@@ -739,7 +797,7 @@ export const LR_R1_GROUP_TASK_ID = 'grouptask1';
 
 export const LR_R1_GROUP_TASK_STAGE = createSurveyStage({
   id: LR_R1_GROUP_TASK_ID,
-  name: 'Group task',
+  name: 'Part 2a - Group task',
   descriptions: createStageTextConfig({infoText: LAS_SCENARIO_REMINDER}),
   questions: createLASSurvivalSurvey(
     LAS_LEADER_ITEMS_MULTIPLE_CHOICE_QUESTIONS,
@@ -752,7 +810,7 @@ export const LR_R1_GROUP_TASK_STAGE = createSurveyStage({
 
 export const LR_R1_STATUS_FEEDBACK_STAGE = createRevealStage({
   id: 'r1_status_feedback',
-  name: 'Round 1 — Leader Selection Result',
+  name: 'Part 2a — Leader Selection Result',
   descriptions: createStageTextConfig({
     primaryText: 'Results of leader selection for this round.',
     infoText: 'Please wait until everyone in your group has reached this page.',
@@ -776,19 +834,108 @@ export const LR_R1_STATUS_FEEDBACK_STAGE = createRevealStage({
 
 const LR_R1_BELIEF_STAGE = createSurveyStage({
   id: 'r1_belief',
-  name: 'Belief about Selection Rule',
+  name: 'Part 2a - Survey',
   questions: [
+    createMultipleChoiceSurveyQuestion({
+      id: 'belief_binary_rule_r1',
+      questionTitle:
+        'Do you think the selected leader had the highest performance score in your group? (If you correctly answer this question you can get a £0.50 bonus)',
+      options: [
+        {id: 'yes', imageId: '', text: 'Yes'},
+        {id: 'no', imageId: '', text: 'No'},
+      ],
+    }),
     createScaleSurveyQuestion({
       id: 'belief_rule_r1',
       questionTitle:
-        'How much do you think the result was due to your performance versus chance? (0 = purely random, 100 = purely performance-based)',
-      lowerText: 'Purely random',
-      upperText: 'Purely performance-based',
+        'Thinking about the result of this round — whether you were selected as leader, not selected, or chose not to apply — to what extent do you think the outcome of the leadership selection was due to performance versus external circumstances/luck?',
+      lowerText: 'Entirely due to external factors (luck, randomness)',
+      upperText: 'Entirely due to performance',
       lowerValue: 0,
       upperValue: 100,
       useSlider: true,
     }),
   ],
+});
+
+const LR_R1_BELIEF_CANDIDATES_UPDATE = createSurveyStage({
+  id: 'r1_belief_candidate_update',
+  name: 'Part 2a - Survey',
+  descriptions: createStageTextConfig({
+    primaryText:
+      'At the end of the experiment, one survey question (from this or another similar section) will be randomly selected. You can get a £0.50 bonus by accurately guessing number of applicants.',
+  }),
+  questions: [
+    createScaleSurveyQuestion({
+      id: 'r1_belief_candidate_update',
+      questionTitle:
+        'We ask you to answer this question again: How many members of the group applied to the role (excluding you), according to you?',
+      lowerText: '0',
+      upperText: '5',
+      lowerValue: 0,
+      upperValue: 5,
+    }),
+  ],
+});
+export const LR_ROUND1_CONF_INFO_v2 =
+  'At the end of the experiment, one belief question (from this or another similar section) will be randomly selected. If your selected answer correctly reflects your actual performance or relative position compared to others, you will receive the £0.50 bonus.\n' +
+  'You can earn an additional £0.50 bonus for accurate guesses in the following questions. ';
+
+const LR_ROUND1_CONFIDENCE_v2 = createSurveyStage({
+  name: 'Part 1 - Performance Estimation',
+  descriptions: createStageTextConfig({
+    primaryText: LR_ROUND1_CONF_INFO_v2,
+  }),
+  questions: [
+    createMultipleChoiceSurveyQuestion({
+      questionTitle:
+        'We would like you to guess how well you did in the previous task compared to other members of your group. Please select the option that best reflects your belief about your rank:',
+      options: [
+        {
+          id: '1',
+          imageId: '',
+          text: 'I would be ranked 1st (the best performer in my group)',
+        },
+        {
+          id: '2',
+          imageId: '',
+          text: 'I would be ranked 2nd',
+        },
+        {
+          id: '3',
+          imageId: '',
+          text: 'I would be ranked 3rd',
+        },
+        {
+          id: '4',
+          imageId: '',
+          text: 'I would be ranked 4th',
+        },
+        {
+          id: '5',
+          imageId: '',
+          text: 'I would be ranked 5th',
+        },
+        {
+          id: '6',
+          imageId: '',
+          text: 'I would be ranked 6th',
+        },
+      ],
+    }),
+    createScaleSurveyQuestion({
+      id: 'conf_round1',
+      questionTitle:
+        'How many of the 5 questions from the previous task do you think you answered correctly?',
+      lowerText: '',
+      upperText: '',
+      lowerValue: 0,
+      upperValue: 5,
+    }),
+  ],
+  progress: createStageProgressConfig({
+    showParticipantProgress: false,
+  }),
 });
 
 //==========================================================
@@ -803,16 +950,18 @@ const LR_R1_BELIEF_STAGE = createSurveyStage({
 // Info stage
 //==========================================================
 export const LR_R2_INSTRUCTIONS_INFO = [
-  `You will now start Round 2 with the same group of 6 participants.`,
-  'A new leader will be selected using the same rule as before.',
-  'The leader’s answers determine the payoff for all group members.',
-  'The leader will be chosen based on performance in the initial tasks, combined with a random component.',
-  'Better performers have higher chances of being selected, but the process is not fully deterministic.',
+  `In this part of the experiment, you are given the chance to select a leader again. The role of the leader, as well as the selection rule, are the same as before.`,
+  'The task that you will complete in this part is similar to previous survival tasks, but with different pairs of items.',
+  "Leader Role: For each question, the leaders will be responsible for providing an answer on behalf of the group. The leader's answers will be evaluated just as in Part 1 (i.e. compared to the answers given by a panel of experts), and all members' payoff for this task will be entirely determined by the leader's answers. The leader receives a fixed £0.50 payment for endorsing the role.",
+  'Leader Selection: Here is how we will select the leader for the next stage: \n\n*On the next page, you will be asked whether you would like to apply for the leader role.\n*Everyone who chooses to apply will be considered as a candidate for the role.\n*We will then conduct a lottery in which each candidate’s chance of being selected depends on their performance scores from the two basic tasks. Participants with higher performance scores will have higher chances of being selected as leader, but no one is guaranteed to be chosen.\n**The top performer always has around 60% chance of being selected as leader\n**Then the probability of being selected decreases with your rank. For example if there are 5 persons who apply, the best performer in Part 1 has 60% of being elected, the second best has x%, the third best x%, the fourth best x% and the last candidate has x%.\n*If no one applies, all group members will automatically be included in the lottery using the same rule—so even if you choose not to apply, you may still be selected as leader if no one else applies.',
+  '\n Timing of the Selection: To avoid unnecessary waiting, everyone will complete the group task before the leader is revealed. Keep in mind that you could be selected as the leader, so please do your best to maximize your own (and potentially your group’s) payoff during the task.',
+  '\n Payment: At the end of the experiment, one task will be randomly selected to determine your bonus payment. Within that task, one question will also be chosen at random.\n' +
+    'If the selected question comes from Part 2b, the leader’s answer will be used to determine the outcome. You will receive a £2 bonus if the leader’s answer is correct, and £0 otherwise.\n',
 ];
 
 export const LR_R2_INSTRUCTIONS = createInfoStage({
-  id: 'r2_firts_instructions',
-  name: 'Round 2 - Instructions',
+  id: 'r2_first_instructions',
+  name: 'Part 2b - Instructions',
   progress: createStageProgressConfig({waitForAllParticipants: false}),
   infoLines: LR_R2_INSTRUCTIONS_INFO,
 });
@@ -820,14 +969,21 @@ export const LR_R2_INSTRUCTIONS = createInfoStage({
 //==========================================================
 // Survey stage
 //==========================================================
+export const LR_R2_APPLY_STAGE_INFO =
+  'As mentioned on the previous page one leader will be appointed in each group. The leader’s answer will determine everyone’s payoff for this stage of the experiment.\n' +
+  "The task you are about to complete is the same type of task you encountered in the first part of the experiment, but it will feature different pairs of items.\n'";
 
 const LR_R2_APPLY_STAGE = createSurveyStage({
   id: 'r2_apply',
-  name: 'Round 2',
+  name: 'Part 2b - Apply',
+  descriptions: createStageTextConfig({
+    primaryText: LR_R2_APPLY_STAGE_INFO,
+  }),
   questions: [
     createMultipleChoiceSurveyQuestion({
       id: 'apply_r2',
-      questionTitle: 'Would you like to apply to become the leader?',
+      questionTitle:
+        'Would you like to apply to be the leader of your group for this stage?',
       options: [
         {id: 'yes', imageId: '', text: 'Yes'},
         {id: 'no', imageId: '', text: 'No'},
@@ -847,10 +1003,14 @@ const LR_R2_APPLY_STAGE = createSurveyStage({
 
 const LR_R2_BELIEF_CANDIDATES = createSurveyStage({
   id: 'r2_belief_candidate',
-  name: 'Round 2 - Survey',
+  name: 'Part 2b - Survey',
+  descriptions: createStageTextConfig({
+    primaryText:
+      'At the end of the experiment, one survey question (from this or another similar section) will be randomly selected. You can get a £0.50 bonus by accurately guessing number of applicants.',
+  }),
   questions: [
     createScaleSurveyQuestion({
-      id: 'r1_belief_candidate',
+      id: 'r2_belief_candidate',
       questionTitle:
         'How many members of the group applied to the role (excluding you), according to you?',
       lowerText: '0',
@@ -863,14 +1023,12 @@ const LR_R2_BELIEF_CANDIDATES = createSurveyStage({
 
 export const LR_R2_INSTRUCTIONS_GROUP = createLRRankingStage({
   id: 'r2_instructions',
-  name: 'Round 2 - Task Instructions',
+  name: 'Part 2b - Task Instructions',
   descriptions: createStageTextConfig({
     primaryText:
-      'You are invited to complete the group task, while the computer gathers information to determine who the selected leader is. ' +
-      "In this part, everyone will complete the same task as in Part 1, but with a new set of questions. However, only the leader's answers will determine the payoff for this task. " +
-      "Since you could potentially be the leader without knowing it yet, keep in mind that your performance might determine everyone's payoff for this part. For each question, the leader's " +
-      'answers will be evaluated in the same manner as in Part 1 and will determine the payoff for all group members. Thus, if a question from next part is selected to determine your final payoff, ' +
-      "it will be the leader's answer that counts. After the task ends, you will be informed of whether or not you were the leader for this round. " +
+      'You are invited to complete the group task, while the computer gathers information to determine who the selected leader is. \n ' +
+      "In this part, everyone will complete the same task as in Part 1b, but with a new set of questions. However, only the leader's answers will determine the payoff for this task. " +
+      "Since you could potentially be the leader without knowing it yet, keep in mind that your performance might determine everyone's payoff for this part. After the task ends, you will be informed of whether or not you were the leader for this round. " +
       "Remember also that in the extreme case where no one applied, you could be selected as the leader. As a result, try to perform to the best of your ability in the following task, regardless of your application status.'",
   }),
   progress: createStageProgressConfig({waitForAllParticipants: true}),
@@ -887,7 +1045,7 @@ export const LR_R2_GROUP_TASK_ID = 'grouptask2';
 
 export const LR_R2_GROUP_TASK_STAGE = createSurveyStage({
   id: LR_R2_GROUP_TASK_ID,
-  name: 'Group task 2',
+  name: 'Part 2b - Group task',
   descriptions: createStageTextConfig({infoText: SD_SCENARIO_REMINDER}),
   questions: createSDSurvivalSurvey(SD_LEADER_ITEMS_MULTIPLE_CHOICE_QUESTIONS),
 });
@@ -898,7 +1056,7 @@ export const LR_R2_GROUP_TASK_STAGE = createSurveyStage({
 
 export const LR_R2_STATUS_FEEDBACK_STAGE = createRevealStage({
   id: 'r2_status_feedback',
-  name: 'Round 2 — Leader Selection Result',
+  name: 'Part 2b — Leader Selection Result',
   descriptions: createStageTextConfig({
     primaryText: 'Results of leader selection for this round.',
     infoText: 'Please wait until everyone in your group has reached this page.',
@@ -922,19 +1080,108 @@ export const LR_R2_STATUS_FEEDBACK_STAGE = createRevealStage({
 
 const LR_R2_BELIEF_STAGE = createSurveyStage({
   id: 'r2_belief',
-  name: 'Belief about Selection Rule',
+  name: 'Part 2b - Survey',
   questions: [
+    createMultipleChoiceSurveyQuestion({
+      id: 'belief_binary_rule_r2',
+      questionTitle:
+        'Do you think the selected leader had the highest performance score in your group? (If you correctly answer this question you can get a £0.50 bonus)',
+      options: [
+        {id: 'yes', imageId: '', text: 'Yes'},
+        {id: 'no', imageId: '', text: 'No'},
+      ],
+    }),
     createScaleSurveyQuestion({
       id: 'belief_rule_r2',
       questionTitle:
-        'How much do you think the result was due to your performance versus chance? (0 = purely random, 100 = purely performance-based)',
-      lowerText: 'Purely random',
-      upperText: 'Purely performance-based',
+        'Thinking about the result of this round — whether you were selected as leader, not selected, or chose not to apply — to what extent do you think the outcome of the leadership selection was due to performance versus external circumstances/luck?',
+      lowerText: 'Entirely due to external factors (luck, randomness)',
+      upperText: 'Entirely due to performance',
       lowerValue: 0,
       upperValue: 100,
       useSlider: true,
     }),
   ],
+});
+
+const LR_R2_BELIEF_CANDIDATES_UPDATE = createSurveyStage({
+  id: 'r2_belief_candidate_update',
+  name: 'Part 2b - Survey',
+  descriptions: createStageTextConfig({
+    primaryText:
+      'At the end of the experiment, one survey question (from this or another similar section) will be randomly selected. You can get a £0.50 bonus by accurately guessing number of applicants.',
+  }),
+  questions: [
+    createScaleSurveyQuestion({
+      id: 'r2_belief_candidate_update',
+      questionTitle:
+        'We ask you to answer this question again: How many members of the group applied to the role (excluding you), according to you?',
+      lowerText: '0',
+      upperText: '5',
+      lowerValue: 0,
+      upperValue: 5,
+    }),
+  ],
+});
+export const LR_ROUND2_CONF_INFO_v2 =
+  'At the end of the experiment, one belief question (from this or another similar section) will be randomly selected. If your selected answer correctly reflects your actual performance or relative position compared to others, you will receive the £0.50 bonus.\n' +
+  'You can earn an additional £0.50 bonus for accurate guesses in the following questions. ';
+
+const LR_ROUND2_CONFIDENCE_v2 = createSurveyStage({
+  name: 'Part 2b - Performance Estimation',
+  descriptions: createStageTextConfig({
+    primaryText: LR_ROUND2_CONF_INFO_v2,
+  }),
+  questions: [
+    createMultipleChoiceSurveyQuestion({
+      questionTitle:
+        'We would like you to guess how well you did in the previous task compared to other members of your group. Please select the option that best reflects your belief about your rank:',
+      options: [
+        {
+          id: '1',
+          imageId: '',
+          text: 'I would be ranked 1st (the best performer in my group)',
+        },
+        {
+          id: '2',
+          imageId: '',
+          text: 'I would be ranked 2nd',
+        },
+        {
+          id: '3',
+          imageId: '',
+          text: 'I would be ranked 3rd',
+        },
+        {
+          id: '4',
+          imageId: '',
+          text: 'I would be ranked 4th',
+        },
+        {
+          id: '5',
+          imageId: '',
+          text: 'I would be ranked 5th',
+        },
+        {
+          id: '6',
+          imageId: '',
+          text: 'I would be ranked 6th',
+        },
+      ],
+    }),
+    createScaleSurveyQuestion({
+      id: 'conf_round2',
+      questionTitle:
+        'How many of the 5 questions from the previous task do you think you answered correctly?',
+      lowerText: '',
+      upperText: '',
+      lowerValue: 0,
+      upperValue: 5,
+    }),
+  ],
+  progress: createStageProgressConfig({
+    showParticipantProgress: false,
+  }),
 });
 
 //==========================================================
@@ -1130,6 +1377,10 @@ export const LR_FEEDBACK_STAGE_BIS = createRevealStage({
       revealScorableOnly: true,
     }),
   ],
+  progress: createStageProgressConfig({
+    showParticipantProgress: false,
+    waitForAllParticipants: false,
+  }),
 });
 
 // ****************************************************************************
