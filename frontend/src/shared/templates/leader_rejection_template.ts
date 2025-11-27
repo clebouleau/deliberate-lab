@@ -123,6 +123,7 @@ export function getLeadershipRejectionStageConfigs(): StageConfig[] {
 
   // Final feedback, survey, payout
   stages.push(LR_FINAL_SURVEY_STAGE);
+  stages.push(LR_SURVEY_STAGE);
   stages.push(LR_FEEDBACK_STAGE);
   stages.push(LR_FEEDBACK_STAGE_BIS);
   stages.push(LR_PAYOUT_INFO_STAGE);
@@ -386,8 +387,8 @@ const LR_INTRO_INFO_LINES = [
   'You will earn a **£5 fixed fee** for completing the full experiment. On top of that, you’ll have the opportunity to earn a **bonus of up to £3**, depending on your own and other participants’ decisions.\n',
   'At the end of Part 1, you will be redirected to a **waiting page**. This waiting time is part of the experiment and has been factored into your payment. **You must remain on this page for the full requested duration—if you leave early or close the study before the waiting period ends, your submission will not be approved.**\n',
   'This waiting period allows us to form groups, as the experiment involves **live interactions** with other participants in Part 2. Once a group is formed, you will be invited to continue to Part 2. **If you are invited to Part 2, you must complete it for your submission to be approved.** If you are invited but choose not to continue, your submission will not be approved.\n' +
-    'In rare cases, if we are unable to match you with a group for Part 2 (for example, if there are not enough participants online), you will complete only the first part and still receive the full fixed fee for Part 1.\n',
-  'To sum up: You will complete the first part individually, and then wait to be invited to the next part of the experiment in groups. **Your submission will only be approved if you do the full experiment**. In the rare case where we could not send you an invitation for Part 2, your submission will still be approved.\n',
+    'In rare cases, if we are unable to match you with a group for Part 2 (for example, if there are not enough participants online), you will complete only the first part and still receive the full £5 fixed fee.\n',
+  'To sum up: You will complete the first part individually, and then wait to be invited to the next part of the experiment in groups. **If your are invited, your submission will only be approved if you do the full experiment**. In the rare case where we could not send you an invitation for Part 2, your submission will still be approved.\n',
   '💸 Your payments will be translated into the currency of your specification when they are paid out to you on the Prolific platform. **Please allow us 24-48 hours to process the payments.**',
   '‼️  This is an interactive experiment, meaning you may be grouped with other participants playing at the same time. Because of this, there may occasionally be short waiting periods while others make their decisions. These waiting times are already included in the estimated duration and payment. Please remain patient and attentive during these moments.\n ',
   'If you experience technical difficulties during the study, **please message the experiment administrators on Prolific as soon as possible.**',
@@ -598,7 +599,7 @@ const LR_BASELINE_CONFIDENCE = createSurveyStage({
 });
 
 export const LR_BASELINE_CONF_INFO_v2 =
-  'You can earn an additional £0.50 bonus for accurate guesses in the following questions. \n Imagine you were matched with a group of five other participants (so six in total, including you) doing the same task at the moment. Based on your performance in the previous task, what do you think your rank would be within this group?';
+  'You can earn an additional £0.50 bonus for accurate guesses in the following questions.';
 
 const LR_BASELINE_CONFIDENCE_v2 = createSurveyStage({
   name: 'Part 1 - Performance Estimation',
@@ -608,7 +609,7 @@ const LR_BASELINE_CONFIDENCE_v2 = createSurveyStage({
   questions: [
     createMultipleChoiceSurveyQuestion({
       questionTitle:
-        'Please select the option that best reflects your belief about your rank:',
+        '\n Imagine you were matched with a group of five other participants (so six in total, including you) doing the same task at the moment. Based on your performance in the previous task, please select the option that best reflects your belief about your rank:',
       options: [
         {
           id: '1',
@@ -882,7 +883,7 @@ export const LR_ROUND1_CONF_INFO_v2 =
   'You can earn an additional £0.50 bonus for accurate guesses in the following questions. ';
 
 const LR_ROUND1_CONFIDENCE_v2 = createSurveyStage({
-  name: 'Part 1 - Performance Estimation',
+  name: 'Part 2a - Performance Estimation',
   descriptions: createStageTextConfig({
     primaryText: LR_ROUND1_CONF_INFO_v2,
   }),
@@ -1209,7 +1210,7 @@ export const LR_R3_INSTRUCTIONS = createInfoStage({
 
 const LR_R3_APPLY_STAGE = createSurveyStage({
   id: 'r3_apply',
-  name: 'Round 3',
+  name: 'Part 2c',
   descriptions: createStageTextConfig({
     primaryText: `Imagine you could complete the group task one last time with a new leader (same task, same role, same selection process).`,
   }),
@@ -1242,31 +1243,369 @@ const LR_R3_APPLY_STAGE = createSurveyStage({
 //==========================================================
 //==========================================================
 //==========================================================
+const LR_SURVEY_PRIMARY = `Please rate how much you agree with the following statements. (1= strongly disagree, 7 = strongly agree)`;
+export const LR_SURVEY_QUESTION: SurveyQuestion[] = [
+  createScaleSurveyQuestion({
+    id: 'g',
+    questionTitle:
+      'Even the things in life I can’t control tend to go my way because I’m lucky. ',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'h',
+    questionTitle: 'I consistently have good luck',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'i',
+    questionTitle: 'I often feel like it’s my lucky day',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'j',
+    questionTitle: 'Luck works in my favour',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'k',
+    questionTitle: ' I consider myself to be a lucky person',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'q',
+    questionTitle: 'Some people are consistently lucky, and others are unlucky',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 's',
+    questionTitle:
+      'There is such a thing as good luck that favors some people, but not others',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'u',
+    questionTitle: 'Luck plays an important part in everyone’s life',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'v',
+    questionTitle: 'I believe in Luck',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
 
-const LR_FINAL_SURVEY_PRIMARY = `Thank you for participating in this experiment. After completing the final survey, clicking 'End experiment' will redirect you to Prolific.`;
+  createScaleSurveyQuestion({
+    id: '2d',
+    questionTitle:
+      'I would rather do something at which I feel confident and relaxed than something which is challenging and difficult.',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: '2a',
+    questionTitle:
+      'When a group I belong to plans an activity, I would rather direct it myself than just help out and have someone else organize it.',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: '2b',
+    questionTitle:
+      ' I would rather learn easy, fun games than difficult, thought games.',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: '2c',
+    questionTitle:
+      'If I am not good at something, I would rather keep struggling to master it than move on to something I may be good at.',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: '2d',
+    questionTitle: 'Once I undertake a task, I persist.',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: '2e',
+    questionTitle:
+      'I prefer to work in situations that require a high level of skill.',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: '2f',
+    questionTitle:
+      ' I more often attempt tasks that I am not sure I can do than tasks that I believe I can do.',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: '2f',
+    questionTitle: 'I like to be busy all the time.',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+];
+export const LR_SURVEYFULL__QUESTION: SurveyQuestion[] = [
+  createScaleSurveyQuestion({
+    id: 'a',
+    questionTitle: 'I consider myself to be an unlucky person',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'b',
+    questionTitle: 'I consistently have bad luck',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'c',
+    questionTitle:
+      'Even the things in life I can control in life don’t go my way because I am unlucky',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'd',
+    questionTitle: 'Luck works against me',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'e',
+    questionTitle: 'I often feel like it’s my unlucky day',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'f',
+    questionTitle:
+      'I mind leaving things to chance because I am an unlucky person',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'g',
+    questionTitle:
+      'Even the things in life I can’t control tend to go my way because I’m lucky. ',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'h',
+    questionTitle: 'I consistently have good luck',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'i',
+    questionTitle: 'I often feel like it’s my lucky day',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'j',
+    questionTitle: 'Luck works in my favour',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'k',
+    questionTitle: ' I consider myself to be a lucky person',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'l',
+    questionTitle:
+      'I don’t mind leaving things to chance because I’m a lucky person ',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'm',
+    questionTitle:
+      ' It’s a mistake to base any decisions on how unlucky you feel',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'n',
+    questionTitle: 'Being unlucky is nothing more than random',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'o',
+    questionTitle:
+      ' It’s a mistake to base any decisions on how lucky you feel',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'p',
+    questionTitle: 'Being lucky is nothing more than random',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'q',
+    questionTitle: 'Some people are consistently lucky, and others are unlucky',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'r',
+    questionTitle:
+      'Some people are consistently unlucky, and others are lucky ',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 's',
+    questionTitle:
+      'There is such a thing as good luck that favours some people, but not others',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 't',
+    questionTitle:
+      'There is such a thing as bad luck that affects some people more than others',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'u',
+    questionTitle: 'Luck plays an important part in everyone’s life',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+  createScaleSurveyQuestion({
+    id: 'v',
+    questionTitle: 'I believe in Luck',
+    lowerText: 'Strongly disagree',
+    lowerValue: 1,
+    upperText: 'Strongly agree',
+    upperValue: 7,
+  }),
+];
+
+const LR_SURVEY_STAGE = createSurveyStage({
+  name: 'Final survey (1/2)',
+  descriptions: createStageTextConfig({
+    primaryText: LR_SURVEY_PRIMARY,
+  }),
+  questions: LR_SURVEY_QUESTION,
+});
+
+const LR_FINAL_SURVEY_PRIMARY = `Please answer the following questions.`;
 export const LR_FINAL_SURVEY_QUESTION: SurveyQuestion[] = [
   createTextSurveyQuestion({
     id: '0',
     questionTitle:
       'During the experiment, you were asked whether wanted to apply to become the group leader. Can you explain the reasons behind your choice? Please provide specific and concrete arguments for your choices.',
   }),
-  createScaleSurveyQuestion({
+  createMultipleChoiceSurveyQuestion({
     id: '1',
     questionTitle:
-      "On the scale from 1 to 10, how satisfied are you by the leader's performance in the first group task? (if you're the leader, rate your own performance)",
-    lowerText: 'Not at all satisfied',
-    lowerValue: 0,
-    upperText: 'Very satisfied',
-    upperValue: 10,
+      'After seeing the outcome of the leader’s selection in Part 2b (accepted vs. rejected if you applied, or just not selected if you did not apply), did you choose to reapply in the next Round? ',
+    options: [
+      {id: 'yes', imageId: '', text: 'Yes'},
+      {id: 'no', imageId: '', text: 'No'},
+    ],
   }),
-  createScaleSurveyQuestion({
-    id: '1bis',
-    questionTitle:
-      "On the scale from 1 to 10, how satisfied are you by the leader's performance in the second group task? (if you're the leader, rate your own performance)",
-    lowerText: 'Not at all satisfied',
-    lowerValue: 0,
-    upperText: 'Very satisfied',
-    upperValue: 10,
+  createTextSurveyQuestion({
+    id: '2',
+    questionTitle: 'Why? (Explain your answer to the previous question)',
   }),
   createTextSurveyQuestion({
     id: '2',
@@ -1318,7 +1657,7 @@ export const LR_FINAL_SURVEY_QUESTION: SurveyQuestion[] = [
 ];
 
 const LR_FINAL_SURVEY_STAGE = createSurveyStage({
-  name: 'Final survey',
+  name: 'Final survey (2/2)',
   descriptions: createStageTextConfig({
     primaryText: LR_FINAL_SURVEY_PRIMARY,
   }),
@@ -1343,7 +1682,7 @@ export const r1_instructions = 'r1_instructions';
 export const r2_instructions = 'r2_instructions';
 
 export const LR_FEEDBACK_STAGE = createRevealStage({
-  name: 'Results reveal - Part 2 (Group Stage)',
+  name: 'Results reveal - Part 2a (Group Stage)',
   descriptions: createStageTextConfig({
     infoText: LR_FEEDBACK_STAGE_INFO,
     primaryText: LR_FEEDBACK_STAGE_PRIMARY,
@@ -1361,7 +1700,7 @@ export const LR_FEEDBACK_STAGE = createRevealStage({
 });
 
 export const LR_FEEDBACK_STAGE_BIS = createRevealStage({
-  name: 'Results reveal - Part 3 (Group Stage)',
+  name: 'Results reveal - Part 2b (Group Stage)',
   descriptions: createStageTextConfig({
     infoText: LR_FEEDBACK_STAGE_INFO,
     primaryText: LR_FEEDBACK_STAGE_PRIMARY,
@@ -1390,17 +1729,17 @@ export const LR_PAYMENT_PART_1A_DESCRIPTION = `Your payment includes a fixed fee
 
 export const LR_PAYMENT_PART_1B_DESCRIPTION = `Your payment includes a fixed fee of £3 and a bonus from one randomly selected Part of the experiment. Part 1b was selected to determine your bonus. The bonus is determined by randomly selecting one question from this part. If your answer to this question is correct, you earn £2; otherwise, you earn £0.`;
 
-export const LR_PAYMENT_PARTS_2_AND_3_DESCRIPTION = `If Part 2 or Part 3 is selected to determine your bonus, one question is randomly chosen, with only the leader's answer counting. You earn £2 if the leader's answer is correct, and £0 otherwise.`;
+export const LR_PAYMENT_PARTS_2_AND_3_DESCRIPTION = `If Part 2a or Part 2b is selected to determine your bonus, one question is randomly chosen, with only the leader's answer counting. You earn £2 if the leader's answer is correct, and £0 otherwise.`;
 
-export const LR_PAYMENT_PART_2_DESCRIPTION = `Your payment includes a fixed fee of £3 and a bonus from one randomly selected Part of the experiment. Part 2 was selected to determine your bonus. One question is randomly chosen from this part, with only the leader's answer counting. You earn £2 if the leader's answer is correct, and £0 otherwise.`;
+export const LR_PAYMENT_PART_2_DESCRIPTION = `Your payment includes a fixed fee of £3 and a bonus from one randomly selected Part of the experiment. Part 2a was selected to determine your bonus. One question is randomly chosen from this part, with only the leader's answer counting. You earn £2 if the leader's answer is correct, and £0 otherwise.`;
 
-export const LR_PAYMENT_PART_3_DESCRIPTION = `Your payment includes a fixed fee of £3 and a bonus from one randomly selected Part of the experiment. Part 3 was selected to determine your bonus. One question is randomly chosen from this part with only the leader's answer counting. You earn £2 if the leader's answer is correct, and £0 otherwise.`;
+export const LR_PAYMENT_PART_3_DESCRIPTION = `Your payment includes a fixed fee of £3 and a bonus from one randomly selected Part of the experiment. Part 2b was selected to determine your bonus. One question is randomly chosen from this part with only the leader's answer counting. You earn £2 if the leader's answer is correct, and £0 otherwise.`;
 
 export const LR_PAYMENT_INSTRUCTIONS = [
   'Your payment includes a fixed fee of £3 and a bonus from one randomly selected Part of the experiment.',
   '## If Part 1a or 1b is selected:',
   LR_PAYMENT_PART_1_DESCRIPTION,
-  '\n ## If Parts 2 or 3 is selected:',
+  '\n ## If Parts 2a or 2b is selected:',
   LR_PAYMENT_PARTS_2_AND_3_DESCRIPTION,
   //`* If Part 2 is selected: ${LR_PAYMENT_PART_2_DESCRIPTION}`,
   //`* If Part 3 is selected: ${LR_PAYMENT_PART_3_DESCRIPTION}`,
@@ -1452,7 +1791,7 @@ export function createLRPayoutItems() {
   const part2 = createSurveyPayoutItem({
     id: 'payout-part-2',
     randomSelectionId: RANDOM_SELECTION_ID,
-    name: 'Parts 2 selected',
+    name: 'Parts 2a selected',
     description: [LR_PAYMENT_PART_2_DESCRIPTION].join('\n\n'),
     stageId: LR_R1_GROUP_TASK_ID,
     baseCurrencyAmount: 6,
@@ -1464,7 +1803,7 @@ export function createLRPayoutItems() {
   const part3 = createSurveyPayoutItem({
     id: 'payout-part-3',
     randomSelectionId: RANDOM_SELECTION_ID,
-    name: 'Parts 3 selected',
+    name: 'Parts 2b selected',
     description: [LR_PAYMENT_PART_3_DESCRIPTION].join('\n\n'),
     stageId: LR_R2_GROUP_TASK_ID,
     baseCurrencyAmount: 6,
