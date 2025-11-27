@@ -704,9 +704,9 @@ const LR_R1_INSTRUCTIONS_INFO = [
 
   '\n\n **Leader Selection**: On the next page, you will be asked whether you would like to apply for the leader role.\n' +
     '* Everyone who chooses to apply will be considered a candidate.\n' +
-    '* We will then conduct a weighted lottery based on performance scores:\n' +
-    '  * Participants with higher performance scores have higher chances of being selected.\n' +
-    '  * The top performer has the highest chance of being selected.\n' +
+    '* We will then conduct a weighted lottery based on performance scores in Part 1a and Part 1b:\n' +
+    '  * Participants with higher performance scores  higher in Part 1a and 1b have chances of being selected.\n' +
+    '  * The top performer (the person who has the highest number of correct answers out of the 10 questions of Part 1a + Part 1b) has the highest chance of being selected.\n' +
     '  * The probability then decreases with rank. For example, if 4 people apply:\n' +
     '    * Best performer → ~60%\n' +
     '    * Second → 30%\n' +
@@ -714,7 +714,7 @@ const LR_R1_INSTRUCTIONS_INFO = [
     '    * Fourth → 2%\n' +
     '* If no one applies, all group members will automatically enter the lottery using the same rule.\n\n',
 
-  '\n\n **Timing of the Selection**: To avoid unnecessary waiting, everyone will complete the group task before the leader is revealed. Keep in mind that you could be selected as the leader, so please do your best to maximize your own (and potentially your group’s) payoff during the task.\n\n',
+  '\n\n **Timing of the Selection**: To avoid unnecessary waiting, everyone will complete the group task before the leader is revealed. ⚠️ Keep in mind that you could be selected as the leader, so please do your best to maximize your own (and potentially your group’s) payoff during the task.\n\n',
 
   '\n\n **Payment**: At the end of the experiment, one task will be randomly selected to determine your bonus payment. Within that task, one question will also be chosen at random.\n' +
     'If the selected question comes from Part 2a, the leader’s answer will be used to determine the outcome. You will receive a £2 bonus if the leader’s answer is correct, and £0 otherwise.\n',
@@ -729,8 +729,8 @@ const LR_R1_INSTRUCTIONS = createInfoStage({
 // Application stage
 //==========================================================
 export const LR_R1_APPLY_STAGE_INFO =
-  'As mentioned on the previous page one leader will be appointed in each group. The leader’s answer will determine everyone’s payoff for this stage of the experiment.\n' +
-  "The task you are about to complete is the same type of task you encountered in the first part of the experiment, but it will feature different pairs of items.\n'";
+  'As mentioned on the previous page one leader will be appointed in each group. The leader will be chosen through a lottery in which only those who apply are considered, and each applicant’s chance of being selected depends on their performance (with higher performers having higher odds), while if no one applies, all group members enter the lottery under the same rule.' +
+  'The leader’s answer will determine everyone’s payoff for this stage of the experiment.\n';
 
 const LR_R1_APPLY_STAGE = createSurveyStage({
   id: 'r1_apply',
@@ -788,9 +788,9 @@ const LR_R1_BELIEF_CANDIDATES = createSurveyStage({
 export const LR_R1_INSTRUCTIONS_GROUP_INFO =
   'You will complete the group task, while the computer gathers information to determine who the selected leader is. ' +
   "\n\n Recall that for this task only the leader's answers count." +
-  "\n\nSince you could potentially be the leader without knowing it yet, keep in mind that your performance might determine everyone's payoff for this part." +
-  "\n\nFor each question, the leader's answers will be evaluated in the same manner as in Part 1 and will determine the payoff for all group members. Thus, if a question from Part 3 is selected to determine your final payoff, it will be the leader's answer that counts. " +
-  "\n\nAfter the task ends, you will be informed of whether or not you were the leader for this round.''Remember also that in the extreme case where no one applied, you could be selected as the leader. As a result, try to perform to the best of your ability in the following task, regardless of your application status.";
+  "\n\n  ⚠️ Since you could potentially be the leader without knowing it yet, keep in mind that your performance might determine everyone's payoff for this part." +
+  "\n\nAfter the task ends, you will be informed of whether or not you were the leader for this round.'+" +
+  'Remember also that in the extreme case where no one applied, you could be selected as the leader. As a result, try to perform to the best of your ability in the following task, regardless of your application status.';
 
 export const LR_R1_INSTRUCTIONS_GROUP = createLRRankingStage({
   id: 'r1_instructions',
@@ -965,9 +965,9 @@ export const LR_R2_INSTRUCTIONS_INFO = [
 
   '\n\n **Leader Selection**: On the next page, you will be asked whether you would like to apply for the leader role.\n' +
     '* Everyone who chooses to apply will be considered a candidate.\n' +
-    '* We will then conduct a weighted lottery based on performance scores:\n' +
-    '  * Participants with higher performance scores have higher chances of being selected.\n' +
-    '  * The top performer has the highest chance of being selected.\n' +
+    '* We will then conduct a weighted lottery based on performance scores in Part 1a and Part 1b:\n' +
+    '  * Participants with higher performance scores  higher in Part 1a and 1b have chances of being selected.\n' +
+    '  * The top performer (the person who has the highest number of correct answers out of the 10 questions of Part 1a + Part 1b) has the highest chance of being selected.\n' +
     '  * The probability then decreases with rank. For example, if 4 people apply:\n' +
     '    * Best performer → ~60%\n' +
     '    * Second → 30%\n' +
@@ -975,7 +975,7 @@ export const LR_R2_INSTRUCTIONS_INFO = [
     '    * Fourth → 2%\n' +
     '* If no one applies, all group members will automatically enter the lottery using the same rule.\n\n',
 
-  '\n\n **Timing of the Selection**: To avoid unnecessary waiting, everyone will complete the group task before the leader is revealed. Keep in mind that you could be selected as the leader, so please do your best to maximize your own (and potentially your group’s) payoff during the task.\n\n',
+  '\n\n **Timing of the Selection**: To avoid unnecessary waiting, everyone will complete the group task before the leader is revealed. ⚠️ Keep in mind that you could be selected as the leader, so please do your best to maximize your own (and potentially your group’s) payoff during the task.\n\n',
 
   '\n\n **Payment**: At the end of the experiment, one task will be randomly selected to determine your bonus payment. Within that task, one question will also be chosen at random.\n' +
     'If the selected question comes from Part 2a, the leader’s answer will be used to determine the outcome. You will receive a £2 bonus if the leader’s answer is correct, and £0 otherwise.\n',
@@ -992,8 +992,8 @@ export const LR_R2_INSTRUCTIONS = createInfoStage({
 // Survey stage
 //==========================================================
 export const LR_R2_APPLY_STAGE_INFO =
-  'As mentioned on the previous page one leader will be appointed in each group. The leader’s answer will determine everyone’s payoff for this stage of the experiment.\n' +
-  'The task you are about to complete is the same type of task you encountered in the first part of the experiment, but it will feature different pairs of items.';
+  'As mentioned on the previous page one leader will be appointed in each group. The leader will be chosen through a lottery in which only those who apply are considered, and each applicant’s chance of being selected depends on their performance (with higher performers having higher odds), while if no one applies, all group members enter the lottery under the same rule.' +
+  'The leader’s answer will determine everyone’s payoff for this stage of the experiment.\n';
 
 const LR_R2_APPLY_STAGE = createSurveyStage({
   id: 'r2_apply',
@@ -1046,9 +1046,9 @@ const LR_R2_BELIEF_CANDIDATES = createSurveyStage({
 export const LR_R2_INFO_INSTRUCTIONS_GROUP =
   'You will complete the group task, while the computer gathers information to determine who the selected leader is. ' +
   "\n\n Recall that for this task only the leader's answers count." +
-  "\n\nSince you could potentially be the leader without knowing it yet, keep in mind that your performance might determine everyone's payoff for this part." +
-  "\n\nFor each question, the leader's answers will be evaluated in the same manner as in Part 1 and will determine the payoff for all group members. Thus, if a question from Part 3 is selected to determine your final payoff, it will be the leader's answer that counts. " +
-  "\n\nAfter the task ends, you will be informed of whether or not you were the leader for this round.''Remember also that in the extreme case where no one applied, you could be selected as the leader. As a result, try to perform to the best of your ability in the following task, regardless of your application status.";
+  "\n\n  ⚠️ Since you could potentially be the leader without knowing it yet, keep in mind that your performance might determine everyone's payoff for this part." +
+  "\n\nAfter the task ends, you will be informed of whether or not you were the leader for this round.'+" +
+  'Remember also that in the extreme case where no one applied, you could be selected as the leader. As a result, try to perform to the best of your ability in the following task, regardless of your application status.';
 
 export const LR_R2_INSTRUCTIONS_GROUP = createLRRankingStage({
   id: 'r2_instructions',
@@ -1344,7 +1344,7 @@ export const LR_SURVEYFULL_QUESTION: SurveyQuestion[] = [
   }),
 
   createScaleSurveyQuestion({
-    id: '2d',
+    id: '2z',
     questionTitle:
       'I would rather do something at which I feel confident and relaxed than something which is challenging and difficult.',
     lowerText: 'Strongly disagree',
@@ -1406,7 +1406,7 @@ export const LR_SURVEYFULL_QUESTION: SurveyQuestion[] = [
     upperValue: 7,
   }),
   createScaleSurveyQuestion({
-    id: '2f',
+    id: '2g',
     questionTitle: 'I like to be busy all the time.',
     lowerText: 'Strongly disagree',
     lowerValue: 1,
